@@ -1,0 +1,21 @@
+# Build files
+bin/
+obj/
+
+# Visual Studio
+.vs/
+.vscode/
+*.user
+*.suo
+
+# Secrets
+appsettings.json
+appsettings.Development.json
+.env
+
+# Database
+*.db
+*.sqlite
+
+# Logs
+*.log
