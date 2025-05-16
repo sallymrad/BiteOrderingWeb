@@ -1,0 +1,94 @@
+﻿@model BiteOrderWeb.Models.Restaurant
+@{
+    Layout = "~/Views/Shared/_ClientLayout.cshtml";
+
+    var now = DateTime.Now.TimeOfDay;
+    var isOpen = Model.OpeningTime < Model.ClosingTime
+        ? now >= Model.OpeningTime && now <= Model.ClosingTime
+        : now >= Model.OpeningTime || now <= Model.ClosingTime;
+}
+
+<style>
+    .closed-banner {
+        background: linear-gradient(135deg, #ffb88c, #ff7f50);
+        color: white;
+        padding: 15px 20px;
+        border-radius: 12px;
+        font-weight: bold;
+        font-size: 1.1rem;
+        text-align: center;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .restaurant-closed {
+        opacity: 0.5;
+        filter: grayscale(40%);
+        pointer-events: none;
+    }
+</style>
+
+<div class="container mt-4 @(isOpen ? "" : "restaurant-closed")">
+    <p style="font-size: 14px;">🧪 Current: <b>@now.ToString(@"hh\:mm")</b> | Opens: <b>@Model.OpeningTime</b> | Closes: <b>@Model.ClosingTime</b></p>
+
+    @if (!isOpen)
+    {
+        <div class="closed-banner">
+            🔒 This restaurant is currently closed.<br />
+            🕒 Opens from <strong>@Model.OpeningTime.ToString(@"hh\:mm")</strong> to <strong>@Model.ClosingTime.ToString(@"hh\:mm")</strong>
+        </div>
+    }
+
+    <h2 class="mb-3">@Model.Name</h2>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <img src="@Model.ImageUrl" class="img-fluid rounded shadow-sm" style="max-height: 350px; object-fit: cover;" />
+        </div>
+        <div class="col-md-6 d-flex flex-column justify-content-center">
+            <p class="fs-5"><strong>📞 Phone:</strong> @Model.Phone</p>
+            <p class="fs-5"><strong>📄 Description:</strong> @Model.Description</p>
+            @if (Model.Address != null)
+            {
+                <p class="fs-5">
+                    <strong>📍 Address:</strong>
+                    @Model.Address.Area?.Name,
+                    @Model.Address.Street,
+                    Building @Model.Address.Building,
+                    Floor @Model.Address.Floor
+                </p>
+            }
+
+            <p class="fs-5">
+                <strong>⏰ Hours:</strong>
+                @Model.OpeningTime.ToString(@"hh\:mm") - @Model.ClosingTime.ToString(@"hh\:mm")
+            </p>
+        </div>
+    </div>
+
+    <h4 class="mt-5">🍽 Menu</h4>
+
+    @foreach (var categoryGroup in Model.RestaurantProducts
+    .Where(rp => !rp.Product.IsDeactivated)
+    .Select(rp => rp.Product)
+    .GroupBy(p => p.Category))
+    {
+        <h5 class="mt-4">@categoryGroup.Key</h5>
+        <div class="row">
+            @foreach (var product in categoryGroup)
+            {
+                <div class="col-md-4 mb-4">
+                    <a asp-controller="Client" asp-action="ProductDetails" asp-route-id="@product.Id" class="text-decoration-none text-dark">
+                        <div class="card h-100 shadow-sm">
+                            <img src="@product.ImageUrl" class="card-img-top" style="height: 200px; object-fit: cover;" />
+                            <div class="card-body">
+                                <h5 class="card-title">@product.Name</h5>
+                                <p class="card-text">@product.Description</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    }
+</div>

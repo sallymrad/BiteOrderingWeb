@@ -1,0 +1,131 @@
+﻿@model List<BiteOrderWeb.Models.Order>
+@{
+    Layout = "~/Views/Shared/_DriverLayout.cshtml";
+    ViewData["Title"] = "Accepted Orders";
+}
+
+<style>
+    .page-title {
+        font-size: 2rem;
+        font-weight: 700;
+        text-align: center;
+        background: linear-gradient(135deg, #fa7b54, #ffc49b);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .accepted-order-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        padding: 25px;
+        background-color: white;
+    }
+
+    .product-image {
+        width: 90px;
+        height: 70px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+    }
+
+    .btn-gradient {
+        background: linear-gradient(135deg, #fa7b54, #ffc49b);
+        color: white;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 30px;
+        font-weight: 500;
+        transition: 0.3s ease;
+    }
+
+        .btn-gradient:hover {
+            filter: brightness(1.05);
+            transform: scale(1.02);
+        }
+
+    .btn-outline-chat {
+        border: 2px solid #fa7b54;
+        color: #fa7b54;
+        padding: 8px 20px;
+        border-radius: 30px;
+        font-weight: 500;
+        transition: 0.3s ease;
+        margin-left: 10px;
+        background-color: transparent;
+    }
+
+        .btn-outline-chat:hover {
+            background: #fa7b54;
+            color: white;
+        }
+
+    .order-item {
+        background-color: #f9f9f9;
+        padding: 10px;
+        border-radius: 10px;
+        margin-bottom: 12px;
+    }
+</style>
+
+<h2 class="mb-4">🚚 Accepted Orders</h2>
+@if (!Model.Any())
+{
+    <p class="text-muted text-center">You have no accepted orders.</p>
+}
+else
+{
+    foreach (var order in Model)
+    {
+        <div class="card mb-4 accepted-order-card">
+            <h5 class="mb-3">🧾 Order #@order.Id</h5>
+            <p><strong>👤 Client:</strong> @order.User?.FullName</p>
+            <p><strong>📍 Address:</strong> @order.Address?.Street, @order.Address?.Area?.Name</p>
+            <p><strong>🏢 Building:</strong> @order.Address?.Building</p>
+            <p><strong>🏬 Floor:</strong> @order.Address?.Floor</p>
+            <p><strong>📅 Date:</strong> @order.Date.ToString("g")</p>
+
+            <hr />
+            <h6 class="fw-bold">🛒 Items (@order.OrderProducts.Count):</h6>
+
+            @foreach (var item in order.OrderProducts)
+            {
+                var restaurant = item.Product?.RestaurantProducts?.FirstOrDefault()?.Restaurant;
+
+                <div class="d-flex mb-3 border p-2 rounded bg-light">
+                    <img src="@item.Product?.ImageUrl" alt="Product Image" class="product-image me-3" />
+                    <div>
+                        <p><strong>🍽️ Product:</strong> @item.Product?.Name</p>
+                        <p><strong>🏪 Restaurant:</strong> @(restaurant?.Name ?? "N/A")</p>
+                        <p><strong>📏 Size:</strong> @item.Size</p>
+                        <p><strong>🔢 Quantity:</strong> @item.Quantity</p>
+                        @if (!string.IsNullOrEmpty(item.Notes))
+                        {
+                            <p><strong>📝 Notes:</strong> @item.Notes</p>
+                        }
+                    </div>
+                </div>
+            }
+
+            <hr />
+            <div class="row">
+                <div class="col-md-4"><strong>💵 Order Price:</strong> $@(order.TotalPrice - order.DeliveryPrice)</div>
+                <div class="col-md-4"><strong>🚚 Delivery Fee:</strong> $@order.DeliveryPrice</div>
+                <div class="col-md-4"><strong>💰 Total:</strong> $@(order.TotalPrice )</div>
+            </div>
+            <p class="mt-2"><strong>📦 Status:</strong> @order.Status</p>
+
+            <div class="mt-3">
+                <form asp-action="MarkAsDone" asp-controller="Driver" method="post" class="d-inline">
+                    <input type="hidden" name="orderId" value="@order.Id" />
+                    <button type="submit" class="btn btn-gradient">✅ Mark as Done</button>
+                </form>
+
+                <a asp-controller="Chat" asp-action="OrderChat" asp-route-orderId="@order.Id" class="btn btn-outline-chat">
+                    💬 Live Chat
+                </a>
+            </div>
+        </div>
+    }
+}

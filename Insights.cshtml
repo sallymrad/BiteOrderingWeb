@@ -1,0 +1,202 @@
+﻿@model BiteOrderWeb.ViewModels.SuperAdminDashboardStatsViewModel
+@using System.Globalization
+@{
+    Layout = "~/Views/Shared/_SuperAdminLayout.cshtml";
+}
+
+@{
+    ViewData["Title"] = "📊 Platform Insights";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4" style="font-size: 32px; color: #333;">📊 Platform Insights</h2>
+
+   
+    <form method="get" class="row g-3 mb-4">
+        <div class="col-md-3">
+            <label class="form-label">From Date</label>
+            <input type="date" name="fromDate" class="form-control modern-input" value="@Model.FromDate?.ToString("yyyy-MM-dd")" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">To Date</label>
+            <input type="date" name="toDate" class="form-control modern-input" value="@Model.ToDate?.ToString("yyyy-MM-dd")" />
+        </div>
+        <div class="col-md-3 align-self-end">
+            <button type="submit" class="btn btn-primary btn-custom">Apply Filter</button>
+            <a href="/SuperAdmin/Insights" class="btn btn-secondary btn-custom">Clear</a>
+        </div>
+    </form>
+
+   
+    @if (Model.OrdersPerDay != null && Model.OrdersPerDay.Any())
+    {
+        <div class="card mb-4 p-3 shadow-sm" style="max-height: 300px;">
+            <h5>📈 Orders Per Day</h5>
+            <canvas id="ordersChart" style="height: 200px;"></canvas>
+        </div>
+    }
+    else
+    {
+        <div class="card mb-4 p-3 shadow-sm text-center">
+            <h5>📈 Orders Per Day</h5>
+            <div class="alert alert-warning">🚫 No orders found for selected range.</div>
+        </div>
+    }
+
+  
+    @if (Model.TopRestaurants != null && Model.TopRestaurants.Any())
+    {
+        <div class="card mb-4 p-3 shadow-sm" style="max-height: 300px;">
+            <h5>🏆 Top Restaurants</h5>
+            <canvas id="topRestaurantsChart" style="height: 200px;"></canvas>
+        </div>
+    }
+    else
+    {
+        <div class="card mb-4 p-3 shadow-sm text-center">
+            <h5>🏆 Top Restaurants</h5>
+            <div class="alert alert-warning">🚫 No restaurant orders found.</div>
+        </div>
+    }
+
+    
+    <div class="card mb-4 p-3 shadow-sm">
+        <h5>🚚 Top Drivers</h5>
+        @if (Model.TopDrivers != null && Model.TopDrivers.Any())
+        {
+            <div class="row">
+                @foreach (var driver in Model.TopDrivers)
+                {
+                    <div class="col-md-3 text-center mb-3">
+                        <img src="@(string.IsNullOrEmpty(driver.ProfilePictureUrl) ? "/default-profile.png" : driver.ProfilePictureUrl)"
+                             class="rounded-circle shadow-sm" width="80" height="80" />
+                        <h6 class="mt-2">@driver.DriverName</h6>
+                        <p class="mb-1 text-muted">Area: @driver.AreaName</p>
+                        <p>Orders: <strong>@driver.DeliveredOrders</strong></p>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-warning text-center">🚫 No top drivers found.</div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        
+        @if (Model.OrdersPerDay != null && Model.OrdersPerDay.Any())
+        {
+            <text>
+                        var ctx1 = document.getElementById('ordersChart').getContext('2d');
+                        var chart1 = new Chart(ctx1, {
+                            type: 'line',
+                            data: {
+                                labels: @Html.Raw(Json.Serialize(Model.OrdersPerDay.Select(x => x.FormattedDate))),
+                                datasets: [{
+                                    label: 'Orders Per Day',
+                                    data: @Html.Raw(Json.Serialize(Model.OrdersPerDay.Select(x => x.TotalOrders))),
+                                    borderColor: '#ff6347',  
+                                    fill: false,
+                                    tension: 0.3,
+                                    pointBackgroundColor: '#ff6347'  
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false
+                            }
+                        });
+            </text>
+        }
+
+       
+        @if (Model.TopRestaurants != null && Model.TopRestaurants.Any())
+        {
+            <text>
+                        var ctx2 = document.getElementById('topRestaurantsChart').getContext('2d');
+                        var chart2 = new Chart(ctx2, {
+                            type: 'bar',
+                            data: {
+                                labels: @Html.Raw(Json.Serialize(Model.TopRestaurants.Select(x => x.RestaurantName))),
+                                datasets: [{
+                                    label: 'Total Orders',
+                                    data: @Html.Raw(Json.Serialize(Model.TopRestaurants.Select(x => x.OrdersCount))),
+                                    backgroundColor: '#ff6347'  
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        ticks: { stepSize: 1 }
+                                    }
+                                }
+                            }
+                        });
+            </text>
+        }
+    </script>
+}
+
+<style>
+    .btn-custom {
+        background: linear-gradient(to right, #ff7f50, #ff6347);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+        .btn-custom:hover {
+            background: linear-gradient(to right, #ff6347, #ff7f50);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+    .btn-primary {
+        background-color: #ff7f50;
+        border-color: #ff7f50;
+        color: white;
+    }
+
+        .btn-primary:hover {
+            background-color: #ff6347;
+            border-color: #ff6347;
+        }
+
+    .btn-secondary {
+        background-color: #f0f2f5;
+        border-color: #f0f2f5;
+        color: #333;
+    }
+
+        .btn-secondary:hover {
+            background-color: #ddd;
+            border-color: #ddd;
+        }
+
+    body {
+        background-color: #f0f2f5;
+    }
+
+    .container {
+        max-width: 1200px;
+        padding: 40px;
+        background-color: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .badge {
+        font-size: 14px;
+        font-weight: bold;
+    }
+</style>

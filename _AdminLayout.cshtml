@@ -1,0 +1,63 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - BiteOrdering</title>
+    <link rel="icon" type="image/png" href="~/my.png" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/BiteOrderWeb.styles.css" asp-append-version="true" />
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light" style="background: linear-gradient(135deg, #ffcc99, #ff9966); padding: 10px 30px;">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <a class="navbar-brand fw-bold" asp-controller="Admin" asp-action="Home">BiteOrdering Admin</a>
+
+
+            <div class="d-flex align-items-center">
+                <a class="btn @(ViewContext.RouteData.Values["action"]!.ToString() == "Index" ? "active" : "")"
+                   asp-controller="Menu" asp-action="Index">
+                    📋 Menu
+                </a>
+
+                <a class="btn @(ViewContext.RouteData.Values["action"]!.ToString() == "RestaurantOrders" ? "active" : "")"
+                   asp-controller="Admin" asp-action="RestaurantOrders">
+                    📦 Orders Summary
+                </a>
+
+                <a class="btn @(ViewContext.RouteData.Values["action"]!.ToString() == "TopOrderedDishes" ? "active" : "")"
+                   asp-controller="Admin" asp-action="TopOrderedDishes">
+                    🍕 Top Dishes
+                </a>
+
+                <a class="btn @(ViewContext.RouteData.Values["action"]!.ToString() == "OrdersPerDayChart" ? "active" : "")"
+                   asp-controller="Admin" asp-action="OrdersPerDayChart">
+                    📊 Orders Trend
+                </a>
+
+                <a class="btn @(ViewContext.RouteData.Values["action"]!.ToString() == "Dashboard" ? "active" : "")"
+                   asp-controller="Admin" asp-action="Dashboard">
+                    📈 Dashboard
+                </a>
+
+                <form class="ms-2" asp-controller="Account" asp-action="Logout" method="post">
+                    <button type="submit" class="btn btn-danger fw-bold">Logout</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+
+    <div class="container mt-4">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
+</html>

@@ -1,0 +1,70 @@
+﻿@model List<BiteOrderWeb.Models.Order>
+@{
+    Layout = "~/Views/Shared/_ClientLayout.cshtml";
+}
+
+<div class="container mt-4">
+    <h2 class="fw-bold mb-4 text-center">📦 My Orders</h2>
+    <p class="text-center text-muted">Total Orders: <strong>@Model.Count</strong></p>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center shadow-sm mt-4">
+            You haven’t placed any orders yet.
+        </div>
+    }
+    else
+    {
+        @foreach (var order in Model.Where(o => o.Status != BiteOrderWeb.Models.Order.OrderStatus.Done))
+        {
+            <div class="card mb-4 shadow rounded-4 border-0">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="fw-semibold mb-0">🧾 Order #@order.Id</h5>
+                        <span class="badge bg-secondary">@order.Status</span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-1"><strong>📍 Address:</strong> @order.Address?.Street, @order.Address?.Area?.Name</p>
+                            <p class="mb-1"><strong>🏢 Building:</strong> @order.Address?.Building</p>
+                            <p class="mb-3"><strong>🏬 Floor:</strong> @order.Address?.Floor</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-1"><strong>📅 Date:</strong> @order.Date.ToString("g")</p>
+                            <p class="mb-1"><strong>🚚 Delivery Fee:</strong> $@order.DeliveryPrice</p>
+                            <p class="mb-1"><strong>💰 Order Price:</strong> $@(order.TotalPrice - order.DeliveryPrice)</p>
+                            <p class="mb-3"><strong>💳 Total:</strong> <span class="text-success fw-semibold">$@order.TotalPrice</span></p>
+                        </div>
+                    </div>
+
+                    <h6 class="fw-bold mt-3">🛒 Items:</h6>
+                    <ul class="list-group list-group-flush mb-3">
+                        @foreach (var item in order.OrderProducts)
+                        {
+                            <li class="list-group-item">
+                                <span class="fw-semibold">@item.Product?.Name</span>
+                                - @item.Size
+                                <span class="text-muted">x @item.Quantity</span>
+                            </li>
+                        }
+                    </ul>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a asp-controller="Chat" asp-action="OrderChat" asp-route-orderId="@order.Id"
+                           class="btn btn-outline-primary btn-sm rounded-pill">
+                            💬 Live Chat
+                        </a>
+
+                        @if (order.Status == BiteOrderWeb.Models.Order.OrderStatus.Pending && order.Date.AddMinutes(5) < DateTime.Now)
+                        {
+                            <span class="text-warning small">
+                                ⏳ Still waiting for a driver... Reminders sent.
+                            </span>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>

@@ -1,0 +1,187 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - BiteOrdering</title>
+    <link rel="icon" type="image/png" href="~/my.png" />
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/BiteOrderWeb.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/account.css" />
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+    </style>
+</head>
+
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<Users> SignInManager
+@inject UserManager<Users> UserManager
+@{
+    var currentUser = await UserManager.GetUserAsync(User);
+    var roles = currentUser != null ? await UserManager.GetRolesAsync(currentUser) : new List<string>();
+}
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(135deg, #ff7e5f, #feb47b);">
+            <div class="container-fluid">
+                <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">BiteOrdering</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                    <ul class="navbar-nav align-items-center">
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                       
+                        
+
+                        @if (User.IsInRole("SuperAdmin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="SuperAdmin" asp-action="ManageRestaurants">🏪 Manage Restaurants</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="SuperAdmin" asp-action="ManageDrivers">🚗 Manage Drivers</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="SuperAdmin" asp-action="ManageUsers">👥 Manage Users</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="SuperAdmin" asp-action="ManageAreas">Manage Areas</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="SuperAdmin" asp-action="ManageOrders">📋 Manage Orders</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-primary fw-bold" asp-controller="SuperAdmin" asp-action="Insights">
+                                    📊 Insights
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="SuperAdmin" asp-action="Dashboard"> Dashboard</a>
+                            </li>
+                        }
+
+                        <ul class="navbar-nav">
+                            @if (User.IsInRole("Admin"))
+                            {
+
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Menu" asp-action="Index">Menu</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="btn btn-outline-info" asp-controller="Admin" asp-action="RestaurantOrders">View Orders Summary</a>
+
+
+                                </li>
+                                <li class="nav-item">
+                                    <a class="btn btn-outline-primary" asp-controller="Admin" asp-action="TopOrderedDishes">Top Ordered Dishes</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="btn btn-outline-primary" asp-controller="Admin" asp-action="OrdersPerDayChart">📊 Orders Trend</a>
+                                </li>
+                                
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Admin" asp-action="Dashboard">Admin Dashboard</a>
+                                </li>
+
+                                
+                                
+                            }
+                        </ul>
+
+                        @if (User.IsInRole("User"))
+                        {
+
+
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Client" asp-action="Index">Home</a>
+
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="ShoppingCart" asp-action="Index">
+                                    🛒 Cart <span class="badge bg-danger" id="cartItemCount">0</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Client" asp-action="MyOrders">📋 My Orders</a>
+                            </li>
+                            <li>
+                                <a class="nav-link" asp-controller="Client" asp-action="Settings">⚙️ Settings</a>
+
+
+                            </li>
+
+                        }
+                        @if (User.IsInRole("Driver"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Driver" asp-action="Orders">📦 View Orders</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-action="AcceptedOrders" asp-controller="Driver">My Orders</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Driver" asp-action="Dashboard">👤 My Profile</a>
+                            </li>
+                        }
+                       
+                            <partial name="_LoginPartial" />
+                        }
+                        
+                       
+
+                       
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 1000,
+            once: true,
+        });
+    </script>
+
+
+
+
+    <script>
+        $(document).ready(function () {
+            $.get("/ShoppingCart/GetCartCount", function (data) {
+                $("#cartItemCount").text(data);
+            });
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

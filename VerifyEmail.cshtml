@@ -1,0 +1,36 @@
+﻿@using BiteOrderWeb.ViewModels;
+@model VerifyEmailViewModel;
+
+@{
+    ViewData["Title"] = "VerifyEmail";
+    Layout = "~/Views/Shared/_AccountLayout.cshtml";
+}
+
+
+<div class="account-container">
+    <div class="account-box">
+        <h2 class="text-center mb-4">Verify Your Email 📧</h2>
+
+        <form asp-action="VerifyEmail" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <input type="submit" value="Verify" class="btn custom-login-btn w-100 p-2 mb-3" />
+
+               
+                    <div class="text-center mt-2">
+                        <a asp-controller="Home" asp-action="Index" class="text-decoration-none mt-3">Back</a>
+                    </div>
+        </form>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial.cshtml");
+    }
+}

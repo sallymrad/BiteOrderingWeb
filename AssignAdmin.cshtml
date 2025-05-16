@@ -1,0 +1,20 @@
+﻿@model BiteOrderWeb.ViewModels.AssignAdminViewModel
+@{
+    Layout = "~/Views/Shared/_SuperAdminLayout.cshtml";
+}
+
+<h2>Assign Admin</h2>
+
+<form asp-action="AssignAdmin" method="post">
+    <input type="hidden" name="restaurantId" value="@Model.RestaurantId" />
+    <div class="form-group">
+        <label for="adminId">Select Admin:</label>
+        <select name="adminId" class="form-control">
+            @foreach (var admin in Model.AvailableAdmins)
+            {
+                <option value="@admin.Id">@admin.FullName (@admin.Email)</option>
+            }
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Assign</button>
+</form>

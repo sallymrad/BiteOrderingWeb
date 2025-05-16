@@ -1,0 +1,127 @@
+﻿@model BiteOrderWeb.ViewModels.EditRestaurantViewModel
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Edit Restaurant";
+}
+
+<style>
+    .form-card {
+        background-color: #ffffff;
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .form-title {
+        color: #FF7F50;
+        font-weight: bold;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-orange {
+        background-color: #FF9966;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 24px;
+        font-weight: bold;
+    }
+
+        .btn-orange:hover {
+            background-color: #ff7f50;
+        }
+
+    .preview-img {
+        max-width: 150px;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    label {
+        font-weight: 500;
+        color: #333;
+    }
+
+    .form-control {
+        border-radius: 10px;
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="form-card">
+        <h2 class="text-center form-title">✏️ Edit Restaurant</h2>
+
+        <form asp-action="EditRestaurant" method="post" enctype="multipart/form-data">
+            <input type="hidden" asp-for="RestaurantId" />
+            <input type="hidden" asp-for="ProfilePictureUrl" />
+
+            <div class="mb-3">
+                <label asp-for="RestaurantName" class="form-label">Restaurant Name</label>
+                <input asp-for="RestaurantName" class="form-control" />
+                <span asp-validation-for="RestaurantName" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="PhoneNumber" class="form-label">Phone Number</label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+
+            <h4 class="mt-4 mb-3 text-muted">📍 Address</h4>
+
+            <div class="mb-3">
+                <label asp-for="AreaId" class="form-label">Select Area</label>
+                <select asp-for="AreaId" asp-items="Model.Areas" class="form-control">
+                    <option value="">-- Select Area --</option>
+                </select>
+                <span asp-validation-for="AreaId" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Street" class="form-label">Street</label>
+                <input asp-for="Street" class="form-control" />
+                <span asp-validation-for="Street" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="modern-label">Building</label>
+                <input type="text" asp-for="Building" class="form-control" />
+            </div>
+
+
+            <div class="mb-3">
+                <label asp-for="Floor" class="form-label">Floor</label>
+                <input asp-for="Floor" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ImageFile" class="form-label">Upload Image</label>
+                <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" />
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.ProfilePictureUrl))
+            {
+                <div class="mb-3">
+                    <label>Current Image:</label><br />
+                    <img src="@Model.ProfilePictureUrl" class="preview-img" />
+                </div>
+            }
+
+            <div class="mb-3">
+                <label asp-for="OpeningTime" class="form-label">Opening Time</label>
+                <input asp-for="OpeningTime" type="time" class="form-control" />
+                <span asp-validation-for="OpeningTime" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ClosingTime" class="form-label">Closing Time</label>
+                <input asp-for="ClosingTime" type="time" class="form-control" />
+                <span asp-validation-for="ClosingTime" class="text-danger"></span>
+            </div>
+
+            <div class="text-end mt-4">
+                <button type="submit" class="btn btn-orange">💾 Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>

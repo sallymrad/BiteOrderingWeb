@@ -1,0 +1,92 @@
+﻿@model List<BiteOrderWeb.Models.Users>
+
+@{
+    ViewData["Title"] = "Manage Drivers";
+    Layout = "~/Views/Shared/_SuperAdminLayout.cshtml";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Manage Drivers</h2>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+
+    <a asp-action="AddDriver" class="btn modern-btn mb-3">+ Add New Driver</a>
+
+    <table class="table table-modern">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Assigned Area</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var driver in Model)
+            {
+                <tr>
+                    <td>@driver.FullName</td>
+                    <td>@driver.PhoneNumber</td>
+                    <td>@driver.Email</td>
+                    <td>@(driver.DeliveryArea ?? "Not Assigned")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- CSS -->
+<style>
+  
+    .modern-btn {
+        background: linear-gradient(to right, #ff7f50, #ff6347); 
+        color: white;
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+        .modern-btn:hover {
+            background: linear-gradient(to right, #ff6347, #ff7f50);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+   
+    .table-modern {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+    }
+
+        .table-modern thead {
+            background-color: #343a40;
+            color: white;
+        }
+
+        .table-modern tbody tr:nth-of-type(odd) {
+            background-color: #f1f1f1; 
+        }
+
+    body {
+        background-color: #f0f2f5; 
+    }
+
+    .container {
+        max-width: 1200px;
+        padding: 40px;
+        background-color: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    }
+</style>

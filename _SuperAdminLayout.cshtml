@@ -1,0 +1,103 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - BiteOrdering</title>
+    <link rel="icon" type="image/png" href="~/my.png" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/account.css" />
+    <link rel="stylesheet" href="~/css/account.css" />
+
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+    <style>
+        body {
+            background-color: #f9fafb;
+        }
+
+        .navbar {
+            background: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .custom-nav-link {
+            padding: 8px 16px;
+            border-radius: 12px;
+            transition: 0.3s;
+            font-weight: 600;
+        }
+
+            .custom-nav-link:hover {
+                background: linear-gradient(135deg, #ff9a76, #ffd5b5);
+                color: white !important;
+            }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg" style="background: linear-gradient(135deg, #ffd5b5, #ffb88c); box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <div class="container-fluid">
+                <a class="navbar-brand fw-bold text-dark" asp-controller="SuperAdmin" asp-action="SuperAdminHome" style="font-size: 1.6rem;">BiteOrdering</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                    <ul class="navbar-nav align-items-center gap-2">
+
+                        <li class="nav-item">
+                            <a class="nav-link custom-nav-link" asp-controller="SuperAdmin" asp-action="ManageRestaurants">🏪 Restaurants</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link custom-nav-link" asp-controller="SuperAdmin" asp-action="ManageDrivers">🚗 Drivers</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link custom-nav-link" asp-controller="SuperAdmin" asp-action="ManageUsers">👥 Users</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link custom-nav-link" asp-controller="SuperAdmin" asp-action="ManageAreas">🗺️ Areas</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link custom-nav-link" asp-controller="SuperAdmin" asp-action="ManageOrders">📋 Orders</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link custom-nav-link" asp-controller="SuperAdmin" asp-action="Insights">📊 Insights</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link custom-nav-link" asp-controller="SuperAdmin" asp-action="Dashboard">📈 Dashboard</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                                <button type="submit" class="btn custom-logout-button">Logout</button>
+                            </form>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+    <div class="container mt-4">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 1000,
+            once: true,
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,97 @@
+﻿@model List<BiteOrderWeb.ViewModels.RestaurantOrderSummaryViewModel>
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Restaurant Orders Summary";
+}
+
+<style>
+    .filter-card {
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .order-card {
+        border-radius: 16px;
+        border: none;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        transition: transform 0.2s;
+    }
+
+        .order-card:hover {
+            transform: translateY(-4px);
+        }
+
+    .section-title {
+        color: #FF7F50;
+        font-weight: bold;
+    }
+
+    .btn-orange {
+        background-color: #FF7F50;
+        color: white;
+        font-weight: bold;
+        border-radius: 10px;
+    }
+
+        .btn-orange:hover {
+            background-color: #ff5722;
+        }
+
+    .order-details p {
+        margin-bottom: 5px;
+        color: #444;
+    }
+
+    .order-details i {
+        margin-right: 6px;
+        color: #555;
+    }
+</style>
+
+<div class="row mt-4">
+
+    <!-- Sidebar Filters -->
+    <div class="col-md-3">
+        <form asp-action="RestaurantOrders" method="get" class="card p-4 filter-card">
+            <h5 class="mb-4 text-center"><i class="fas fa-filter"></i> Filter Orders</h5>
+
+            <div class="form-group mb-3">
+                <label for="date"><i class="fas fa-calendar-day"></i> Date</label>
+                <input type="date" name="date" class="form-control" value="@Context.Request.Query["date"]" />
+            </div>
+
+            <div class="form-group mb-4">
+                <label><i class="fas fa-list"></i> Category</label>
+                <input type="text" name="category" class="form-control" value="@Context.Request.Query["category"]" placeholder="e.g. Main Dish" />
+            </div>
+
+            <button type="submit" class="btn btn-orange w-100 mb-2">Apply Filters</button>
+            <a asp-action="RestaurantOrders" class="btn btn-secondary w-100">Clear Filters</a>
+        </form>
+    </div>
+
+    <!-- Orders List -->
+    <div class="col-md-9">
+        <h2 class="section-title mb-4">📋 Orders Summary</h2>
+
+        @if (!Model.Any())
+        {
+            <div class="alert alert-warning text-center">No orders found for the selected filters.</div>
+        }
+
+        @foreach (var order in Model)
+        {
+            <div class="card order-card p-4 mb-3">
+                <h5 class="fw-bold mb-3">📦 Order #@order.OrderId <span class="text-muted">by @order.CustomerName</span></h5>
+
+                <div class="order-details">
+                    <p><i class="fas fa-calendar-day"></i> <strong>Date:</strong> @order.Date</p>
+                    <p><i class="far fa-clock"></i> <strong>Time:</strong> @order.Time</p>
+                    <p><i class="fas fa-tags"></i> <strong>Categories:</strong> @string.Join(", ", order.Categories)</p>
+                    <p><i class="fas fa-hamburger"></i> <strong>Dishes:</strong> @string.Join(", ", order.Products)</p>
+                    <p><i class="fas fa-sort-numeric-up"></i> <strong>Quantity:</strong> @string.Join(", ", order.Quantities)</p>
+                </div>
+            </div>
+        }
+    </div>
+</div>

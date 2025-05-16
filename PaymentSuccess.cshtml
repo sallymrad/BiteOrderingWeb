@@ -1,0 +1,22 @@
+﻿@{
+    Layout = "~/Views/Shared/_ClientLayout.cshtml";
+}
+
+@{
+    ViewData["Title"] = "Payment Success";
+}
+
+<div class="container text-center mt-5">
+    <h2 class="text-success">✅ Payment Successful!</h2>
+    <p class="lead">Your order has been placed and is being processed.</p>
+
+    <div class="alert alert-info mt-4" style="max-width: 600px; margin: 0 auto;">
+        ⏳ Your order is pending now. A driver will accept it soon.<br />
+        
+    </div>
+
+    <a asp-controller="Client" asp-action="Index" class="btn btn-primary mt-4">
+        🏠 Back to Home
+    </a>
+</div>
+

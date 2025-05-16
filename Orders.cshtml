@@ -1,0 +1,155 @@
+﻿@model List<BiteOrderWeb.Models.Order>
+@{
+    Layout = "~/Views/Shared/_DriverLayout.cshtml";
+    ViewData["Title"] = "Available Orders";
+}
+
+<style>
+    .order-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+        background-color: #fff;
+    }
+
+    .order-header {
+        background: linear-gradient(135deg, #fa7b54, #ffc49b);
+        color: white;
+        padding: 12px 20px;
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+
+    .order-body {
+        padding: 20px;
+    }
+
+    .product-image {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 10px;
+        border: 1px solid #eee;
+    }
+
+    .btn-gradient {
+        background: linear-gradient(135deg, #fa7b54, #ffc49b);
+        color: white;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 30px;
+        font-weight: 500;
+        transition: 0.3s ease;
+    }
+
+        .btn-gradient:hover {
+            filter: brightness(1.05);
+            transform: scale(1.02);
+        }
+
+    .order-item {
+        background-color: #f9f9f9;
+        padding: 10px;
+        border-radius: 10px;
+        margin-bottom: 12px;
+    }
+
+    .page-title {
+        font-size: 2rem;
+        font-weight: 700;
+        text-align: center;
+        background: linear-gradient(135deg, #fa7b54, #ffc49b);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+</style>
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">📦 Available Orders</h2>
+
+
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success text-center">@TempData["Success"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger text-center">@TempData["Error"]</div>
+    }
+
+    @if (!Model.Any())
+    {
+        <p class="text-muted text-center">No pending orders available in your area.</p>
+    }
+    else
+    {
+        foreach (var order in Model)
+        {
+            var restaurantName = order.OrderProducts
+            .Select(op => op.Product?.RestaurantProducts?.FirstOrDefault()?.Restaurant?.Name)
+            .FirstOrDefault(name => !string.IsNullOrEmpty(name));
+
+            <div class="card mb-4 order-card">
+                <div class="order-header">
+                    🧾 Order #@order.Id
+                </div>
+                <div class="order-body">
+                    <p><strong>👤 Client:</strong> @order.User.FullName</p>
+                    <p>
+                        <strong>📍 Address:</strong> @order.Address?.Area?.Name, @order.Address?.Street,
+                        Building @order.Address?.Building, Floor @order.Address?.Floor
+                    </p>
+
+                    @if (!string.IsNullOrEmpty(restaurantName))
+                    {
+                        <p><strong>🏪 Restaurant:</strong> @restaurantName</p>
+                    }
+
+                    <hr />
+                    <h6 class="fw-semibold">🛒 Items (Total: @order.OrderProducts.Count):</h6>
+
+                    @foreach (var item in order.OrderProducts)
+                    {
+                        <div class="order-item d-flex align-items-start">
+                            @if (!string.IsNullOrEmpty(item.Product?.ImageUrl))
+                            {
+                                <img src="@item.Product.ImageUrl" alt="Product Image" class="product-image me-3" />
+                            }
+
+                            <div>
+                                <p class="mb-1"><strong>🍽 Product:</strong> @item.Product?.Name</p>
+                                <p class="mb-1"><strong>📏 Size:</strong> @item.Size</p>
+                                <p class="mb-1"><strong>🔢 Quantity:</strong> @item.Quantity</p>
+                                @if (!string.IsNullOrEmpty(item.Notes))
+                                {
+                                    <p class="mb-1"><strong>📝 Notes:</strong> @item.Notes</p>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-4"><strong>💰 Order Price:</strong> $@(order.TotalPrice - order.DeliveryPrice)</div>
+                        <div class="col-md-4"><strong>🚚 Delivery Fee:</strong> $@order.DeliveryPrice</div>
+                        <div class="col-md-4"><strong>💵 Total:</strong> $@order.TotalPrice</div>
+                    </div>
+                    <p class="mt-2"><strong>🕒 Date:</strong> @order.Date.ToString("g")</p>
+
+                    <form asp-action="AcceptOrder" asp-controller="Driver" method="post" class="d-inline">
+                        <input type="hidden" name="orderId" value="@order.Id" />
+                        <button type="submit" class="btn btn-gradient mt-2">✅ Accept</button>
+                    </form>
+
+                    <form asp-action="RejectOrder" asp-controller="Driver" method="post" class="d-inline ms-2">
+                        <input type="hidden" name="orderId" value="@order.Id" />
+                        <button type="submit" class="btn btn-gradient mt-2">❌ Reject</button>
+                    </form>
+                </div>
+            </div>
+        }
+    }
+</div>

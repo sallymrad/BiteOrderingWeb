@@ -1,0 +1,149 @@
+﻿@model BiteOrderWeb.ViewModels.ClientSettingsViewModel
+@{
+    Layout = "~/Views/Shared/_ClientLayout.cshtml";
+    ViewData["Title"] = "⚙️ Account Settings";
+}
+
+<style>
+    .gradient-btn {
+        background: linear-gradient(45deg, #ff6f61, #ff9472);
+        border: none;
+        color: white;
+        transition: 0.3s ease-in-out;
+    }
+
+        .gradient-btn:hover {
+            opacity: 0.9;
+        }
+
+    .rounded-card {
+        background-color: #fffdf7;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    .profile-img {
+        width: 130px;
+        height: 130px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 4px solid #ff9472;
+        box-shadow: 0 0 10px rgba(255, 148, 114, 0.4);
+    }
+
+    .form-label {
+        font-weight: 500;
+    }
+
+    .section-divider {
+        border: 1px solid #ffddd2;
+    }
+
+    .info-icon {
+        color: #ff9472;
+        margin-right: 5px;
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="rounded-card">
+
+        <h3 class="text-center mb-4 text-orange">
+            <i class="bi bi-gear-fill info-icon"></i> Account Settings
+        </h3>
+
+        @if (TempData["PasswordUpdated"] != null)
+        {
+            <div class="alert alert-success text-center">
+                @TempData["PasswordUpdated"]
+            </div>
+        }
+
+        @if (TempData["HasOrders"] != null && (bool)TempData["HasOrders"])
+        {
+            <div class="alert alert-warning text-center">
+                🚫 You cannot deactivate your account because there are active orders.
+            </div>
+        }
+
+        @if (TempData["AccountDeactivated"] != null)
+        {
+            <div class="alert alert-danger text-center">
+                @TempData["AccountDeactivated"]
+            </div>
+            TempData["AccountDeactivated"] = null;
+        }
+
+        <div class="text-center mb-4">
+            <img src="@(Model.ProfilePictureUrl ?? "/default-profile.png")" class="profile-img" />
+            <form asp-action="UploadProfilePicture" asp-controller="Client" method="post" enctype="multipart/form-data" class="mt-2">
+                <input type="file" name="profileImage" class="form-control-sm" required />
+                <button type="submit" class="btn btn-sm gradient-btn mt-2 px-3 py-1">Upload</button>
+            </form>
+        </div>
+
+        <form asp-action="UpdateSettings" asp-controller="Client" method="post">
+            <div class="row mb-4">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">👤 Full Name</label>
+                    <input asp-for="FullName" class="form-control rounded-pill shadow-sm" required />
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">📞 Phone Number</label>
+                    <input asp-for="PhoneNumber" class="form-control rounded-pill shadow-sm" required />
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <p class="mb-0"><strong>📧 Email:</strong> @(Model.Email)</p>
+            </div>
+
+            <hr class="section-divider" />
+
+            <h5 class="mt-4 mb-3 text-orange">🔐 Change Password</h5>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">New Password</label>
+                    <input asp-for="NewPassword" type="password" class="form-control rounded-pill shadow-sm" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Confirm Password</label>
+                    <input asp-for="ConfirmPassword" type="password" class="form-control rounded-pill shadow-sm" />
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <button type="submit" class="btn gradient-btn px-4 py-2 rounded-pill">
+                    💾 Save Changes
+                </button>
+                <button type="button" class="btn btn-outline-danger px-4 py-2 rounded-pill" onclick="checkBeforeDeactivate()">
+                    🚫 Deactivate Account
+                </button>
+            </div>
+
+            <input type="hidden" asp-for="Email" value="@Model.Email" />
+        </form>
+
+        <form id="deactivateForm" asp-action="DeactivateAccount" asp-controller="Client" method="post" style="display:none;"></form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function checkBeforeDeactivate() {
+            fetch('/Client/CheckCanDeactivate')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.canDeactivate) {
+                        if (confirm("⚠️ Are you sure you want to deactivate your account? You won’t be able to log in again.")) {
+                            document.getElementById('deactivateForm').submit();
+                        }
+                    } else {
+                        alert("🚫 You cannot deactivate your account because there are active orders.");
+                    }
+                });
+        }
+    </script>
+}

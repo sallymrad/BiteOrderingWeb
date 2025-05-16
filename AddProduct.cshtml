@@ -1,0 +1,207 @@
+﻿@model BiteOrderWeb.ViewModels.ProductViewModel
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .modern-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 20px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
+    }
+
+    .modern-title {
+        color: #FF7F50;
+        font-weight: bold;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .modern-label {
+        font-weight: 600;
+        color: #444;
+    }
+
+    .btn-orange {
+        background-color: #FF7F50;
+        color: white;
+        border-radius: 12px;
+        font-weight: bold;
+        padding: 10px 24px;
+        border: none;
+    }
+
+        .btn-orange:hover {
+            background-color: #ff5722;
+        }
+
+    .btn-cancel {
+        background-color: #6c757d;
+        color: white;
+        border-radius: 12px;
+        padding: 10px 24px;
+        border: none;
+    }
+
+    .form-control {
+        border-radius: 12px;
+    }
+
+    .removeSize {
+        border-radius: 8px;
+        font-weight: bold;
+    }
+
+    .add-size-btn {
+        background-color: #6c757d;
+        border: none;
+        border-radius: 10px;
+        padding: 8px 20px;
+        color: white;
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="modern-card">
+        <h2 class="modern-title">🍳 Add New Product</h2>
+
+        <form asp-action="AddProduct" method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label asp-for="ImageFile" class="modern-label">Upload Image</label>
+                <input type="file" asp-for="ImageFile" class="form-control" accept="image/*" required />
+                <span asp-validation-for="ImageFile" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Name" class="modern-label">Product Name</label>
+                <input type="text" asp-for="Name" class="form-control" required />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="modern-label">Category</label>
+                <select id="categoryDropdown" class="form-control" required>
+                    <option value="Appetizers">Appetizers</option>
+                    <option value="Main Dishes">Main Dishes</option>
+                    <option value="Drinks">Drinks</option>
+                    <option value="Other">Other</option>
+                </select>
+                <input type="text" id="newCategoryInput" class="form-control mt-2" placeholder="Enter new category" style="display: none;" />
+                <input type="hidden" name="Category" id="finalCategoryInput" />
+            </div>
+
+            <div class="mb-3">
+                <label class="modern-label">Sizes, Quantities and Prices</label>
+                <div id="sizesContainer">
+                    @for (int i = 0; i < Model.Sizes.Count; i++)
+                    {
+                        <div class="row mb-2">
+                            <div class="col-md-4">
+                                <label>Size</label>
+                                <input type="text" asp-for="Sizes[i].Size" class="form-control" required />
+                                <input type="hidden" asp-for="Sizes[i].Id" />
+                            </div>
+                            <div class="col-md-4">
+                                <label>Quantity</label>
+                                <input type="number" asp-for="Sizes[i].Quantity" class="form-control" min="0" required />
+                            </div>
+                            <div class="col-md-3">
+                                <label>Price</label>
+                                <input type="number" asp-for="Sizes[i].Price" class="form-control" min="0" step="0.01" required />
+                            </div>
+                            <div class="col-md-1 d-flex align-items-end">
+                                <button type="button" class="btn btn-danger removeSize">X</button>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <button type="button" class="add-size-btn mt-2" id="addSize">+ Add Size</button>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Description" class="modern-label">Description</label>
+                <textarea asp-for="Description" class="form-control" required></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <a asp-action="Index" class="btn-cancel">Cancel</a>
+                <button type="submit" class="btn-orange">Add Product</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        // Category dropdown handler
+        const categoryDropdown = document.getElementById("categoryDropdown");
+        const newCategoryInput = document.getElementById("newCategoryInput");
+        const finalCategoryInput = document.getElementById("finalCategoryInput");
+
+        function updateFinalCategory() {
+            if (categoryDropdown.value === "Other") {
+                finalCategoryInput.value = newCategoryInput.value;
+            } else {
+                finalCategoryInput.value = categoryDropdown.value;
+            }
+        }
+
+        categoryDropdown.addEventListener("change", function () {
+            if (this.value === "Other") {
+                newCategoryInput.style.display = "block";
+                newCategoryInput.focus();
+            } else {
+                newCategoryInput.style.display = "none";
+            }
+            updateFinalCategory();
+        });
+
+        newCategoryInput.addEventListener("input", updateFinalCategory);
+        updateFinalCategory();
+
+        // Add new size row
+        let sizeIndex = @((Model.Sizes?.Count ?? 0));
+
+        document.getElementById("addSize").addEventListener("click", function () {
+            const container = document.getElementById("sizesContainer");
+
+            const newRow = document.createElement("div");
+            newRow.className = "row mb-2";
+
+            newRow.innerHTML = `
+                <div class="col-md-4">
+                    <label>Size</label>
+                    <input type="text" name="Sizes[${sizeIndex}].Size" class="form-control" required />
+                </div>
+                <div class="col-md-4">
+                    <label>Quantity</label>
+                    <input type="number" name="Sizes[${sizeIndex}].Quantity" class="form-control" min="0" required />
+                </div>
+                <div class="col-md-3">
+                    <label>Price</label>
+                    <input type="number" name="Sizes[${sizeIndex}].Price" class="form-control" min="0" step="0.01" required />
+                </div>
+                <div class="col-md-1 d-flex align-items-end">
+                    <button type="button" class="btn btn-danger removeSize">X</button>
+                </div>
+            `;
+
+            container.appendChild(newRow);
+            sizeIndex++;
+        });
+
+        // Remove size row
+        document.addEventListener("click", function (e) {
+            if (e.target && e.target.classList.contains("removeSize")) {
+                const sizeRow = e.target.closest(".row");
+                if (sizeRow) {
+                    sizeRow.remove();
+                }
+            }
+        });
+    </script>
+}

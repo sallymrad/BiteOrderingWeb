@@ -1,0 +1,95 @@
+﻿@model BiteOrderWeb.ViewModels.AddDriverViewModel
+@{
+    Layout = "~/Views/Shared/_SuperAdminLayout.cshtml";
+}
+
+@{
+    ViewData["Title"] = "Add New Driver";
+}
+
+<h2 class="text-center mb-4">Add New Driver</h2>
+
+<form asp-action="AddDriver" method="post" class="form-container">
+    <div class="mb-3">
+        <label asp-for="FullName" class="form-label">Full Name</label>
+        <input asp-for="FullName" class="form-control modern-input" required />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label">Email</label>
+        <input asp-for="Email" type="email" class="form-control modern-input" required />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="PhoneNumber" class="form-label">Phone Number</label>
+        <input asp-for="PhoneNumber" class="form-control modern-input" required />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Password" class="form-label">Password</label>
+        <input asp-for="Password" type="password" class="form-control modern-input" required />
+        <small class="text-muted">Note: If there's an error, you'll need to re-enter the password.</small>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="AreaId" class="form-label">Assigned Area</label>
+        <select asp-for="AreaId" asp-items="Model.Areas" class="form-select modern-input" required>
+            <option value="">-- Select Area --</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn modern-btn">Add Driver</button>
+</form>
+
+<!-- CSS -->
+<style>
+  
+    .form-container {
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-label {
+        font-weight: bold;
+    }
+
+    .modern-input {
+        background: #f7f7f7;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 12px;
+        font-size: 16px;
+        transition: border-color 0.3s ease;
+    }
+
+        .modern-input:focus {
+            border-color: #ff7f50;
+            outline: none;
+        }
+
+    .btn {
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .modern-btn {
+        background: linear-gradient(to right, #ff7f50, #ff6347);
+        color: white;
+        border: none;
+    }
+
+        .modern-btn:hover {
+            background: linear-gradient(to right, #ff6347, #ff7f50);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+    body {
+        background-color: #f0f2f5;
+    }
+</style>

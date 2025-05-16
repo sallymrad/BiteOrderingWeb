@@ -1,0 +1,78 @@
+﻿@using BiteOrderWeb.ViewModels
+@model SuperAdminViewModel
+
+@{
+    Layout = "~/Views/Shared/_SuperAdminLayout.cshtml";
+}
+
+@{
+    ViewData["Title"] = "Super Admin Dashboard";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4" style="font-size: 32px; font-weight: bold; color: #333;">Super Admin Dashboard</h2>
+
+    <!-- Card for Profile -->
+    <div class="card p-4 shadow-lg mb-5" style="border-radius: 20px;">
+        <div class="row align-items-center">
+            <div class="col-md-3 text-center">
+                @if (!string.IsNullOrEmpty(Model.ProfilePictureUrl))
+                {
+                    <img src="@Model.ProfilePictureUrl" alt="Profile" class="rounded-circle border" width="150" height="150" />
+                }
+                else
+                {
+                    <img src="/default-profile.png" alt="Default Profile" class="rounded-circle border" width="150" height="150" />
+                }
+            </div>
+
+            <div class="col-md-9">
+                <h4 class="font-weight-bold">@Model.FullName</h4>
+                <p><strong>Email:</strong> @Model.Email</p>
+                <p><strong>Role:</strong> Super Admin</p>
+                <a asp-action="EditProfile" asp-route-id="@Model.Id" class="btn btn-primary btn-custom">Edit Profile</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Display Success or Info Message -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+
+    @if (TempData["Info"] != null)
+    {
+        <div class="alert alert-info">@TempData["Info"]</div>
+    }
+
+    <!-- Statistics Cards -->
+    <div class="row text-center">
+        <div class="col-md-3">
+            <div class="card" style="background-color: #8e44ad; color: white; border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                <h3>@Model.RestaurantsCount</h3>
+                <p>Restaurants</p>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card" style="background-color: #f39c12; color: white; border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                <h3>@Model.AdminsCount</h3>
+                <p>Admins</p>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card" style="background-color: #2ecc71; color: white; border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                <h3>@Model.ClientsCount</h3>
+                <p>Clients</p>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card" style="background-color: #e74c3c; color: white; border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                <h3>@Model.DriversCount</h3>
+                <p>Drivers</p>
+            </div>
+        </div>
+    </div>

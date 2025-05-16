@@ -1,0 +1,199 @@
+﻿@model List<BiteOrderWeb.Models.Users>
+@{
+    ViewData["Title"] = "Manage Users";
+    Layout = "~/Views/Shared/_SuperAdminLayout.cshtml";
+}
+
+<h2 class="text-center mb-4">Manage Users</h2>
+
+<div class="row">
+    <div class="col-md-3">
+        <!-- 🔎 Role Filter -->
+        <form method="get" class="mb-4">
+            <div class="card p-3">
+                <h5 class="mb-3">🔎 Filter by Role</h5>
+                <select name="role" class="form-control modern-input">
+                    <option value="All" selected="@(ViewBag.selectedRole == "All")">All</option>
+                    <option value="SuperAdmin" selected="@(ViewBag.selectedRole == "SuperAdmin")">SuperAdmin</option>
+                    <option value="Admin" selected="@(ViewBag.selectedRole == "Admin")">Admin</option>
+                    <option value="Driver" selected="@(ViewBag.selectedRole == "Driver")">Driver</option>
+                    <option value="Client" selected="@(ViewBag.selectedRole == "Client")">Client</option>
+                </select>
+                <button type="submit" class="btn btn-info btn-sm mt-2 modern-btn">Apply Filter</button>
+                <a href="@Url.Action("ManageUsers", "SuperAdmin")" class="btn btn-secondary btn-sm mt-2 modern-btn">Clear Filter</a>
+            </div>
+        </form>
+    </div>
+
+    <div class="col-md-9">
+        <input type="text" id="searchInput" class="form-control mb-3 modern-input" placeholder="🔍 Search Users..." onkeyup="searchUsers()" />
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">@TempData["Error"]</div>
+        }
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success">@TempData["Success"]</div>
+        }
+
+        <table class="table table-modern" id="usersTable">
+            <thead>
+                <tr>
+                    <th>Profile Picture</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    var role = ViewBag.UserRoles[user.Id];
+                    <tr>
+                        <td>
+                            @if (!string.IsNullOrEmpty(user.ProfilePictureUrl))
+                            {
+                                <img src="@user.ProfilePictureUrl" alt="Profile" width="50" height="50" class="rounded-circle" />
+                            }
+                            else if (!string.IsNullOrEmpty(user.ProfilePicture))
+                            {
+                                <img src="@user.ProfilePicture" alt="Profile" width="50" height="50" class="rounded-circle" />
+                            }
+                            else
+                            {
+                                <span>No Image</span>
+                            }
+                        </td>
+                        <td>@user.FullName</td>
+                        <td>@user.Email</td>
+                        <td>@user.PhoneNumber</td>
+                        <td>@role</td>
+                        <td>
+                            @(user.IsDeactivated ? "❌ Deactivated" : "✅ Active")
+                        </td>
+                        <td>
+                            @if (role != "SuperAdmin")
+                            {
+                                @if (user.IsDeactivated)
+                                {
+                                    <form asp-action="ActivateUser" asp-route-id="@user.Id" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-success btn-sm modern-btn">Activate</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-action="DeactivateUser" asp-route-id="@user.Id" method="post" class="d-inline"
+                                          onsubmit="return confirm('Are you sure you want to deactivate this user?');">
+                                        <button type="submit" class="btn btn-warning btn-sm modern-btn">Deactivate</button>
+                                    </form>
+                                }
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function searchUsers() {
+        var input = document.getElementById("searchInput");
+        var filter = input.value.toUpperCase();
+        var table = document.getElementById("usersTable");
+        var tr = table.getElementsByTagName("tr");
+
+        for (var i = 1; i < tr.length; i++) {
+            var td = tr[i].getElementsByTagName("td");
+            let found = false;
+
+            for (var j = 0; j < td.length; j++) {
+                var txtValue = td[j].textContent || td[j].innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (found) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+</script>
+
+<!-- CSS -->
+<style>
+    .modern-btn {
+        background: linear-gradient(to right, #ff7f50, #ff6347); 
+        color: white;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+        .modern-btn:hover {
+            background: linear-gradient(to right, #ff6347, #ff7f50);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+   
+    .table-modern {
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    }
+
+        .table-modern thead {
+            background-color: #343a40;
+            color: white;
+        }
+
+        .table-modern tbody tr:nth-of-type(odd) {
+            background-color: #f1f1f1; 
+        }
+
+    .modern-input {
+        background: #f7f7f7;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 12px;
+        font-size: 16px;
+        transition: border-color 0.3s ease;
+    }
+
+        .modern-input:focus {
+            border-color: #ff7f50;
+            outline: none;
+        }
+
+    body {
+        background-color: #f0f2f5; 
+    }
+
+    .container {
+        max-width: 1200px;
+        padding: 40px;
+        background-color: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    }
+</style>
+<script>
+   
+    setTimeout(function() {
+        var successMessage = document.querySelector(".alert-success");
+        if (successMessage) {
+            successMessage.style.display = "none";
+        }
+    }, 5000); 
+</script>

@@ -1,0 +1,46 @@
+﻿@model BiteOrderWeb.ViewModels.CheckoutViewModel
+@{
+    Layout = "~/Views/Shared/_ClientLayout.cshtml";
+}
+
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4 text-center">Checkout</h2>
+
+    <form asp-action="Checkout" method="post">
+        <div class="mb-3">
+            <label asp-for="AreaId" class="form-label">Select Area</label>
+            <select asp-for="AreaId" asp-items="Model.Areas" class="form-control"></select>
+            <span asp-validation-for="AreaId" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Street" class="form-label">Street</label>
+            <input asp-for="Street" class="form-control" />
+            <span asp-validation-for="Street" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Building" class="form-label">Building</label>
+            <input asp-for="Building" class="form-control" />
+            <span asp-validation-for="Building" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Floor" class="form-label">Floor</label>
+            <input asp-for="Floor" class="form-control" />
+            <span asp-validation-for="Floor" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-success">Confirm & Continue to Payment</button>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,81 @@
+﻿@model List<BiteOrderWeb.Models.Restaurant>
+
+@{
+    ViewData["Title"] = "Manage Restaurants";
+    Layout = "~/Views/Shared/_SuperAdminLayout.cshtml";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4 font-weight-bold text-dark">Manage Restaurants</h2>
+
+    <a asp-action="AddRestaurant" class="btn modern-btn mb-3">+ Add New Restaurant</a>
+
+    <table class="table table-modern">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Admin</th>
+                <th>Phone</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var restaurant in Model)
+            {
+                <tr>
+                    <td>@restaurant.Name</td>
+                    <td>@(restaurant.AdminUser?.FullName ?? "Not Assigned")</td>
+                    <td>@restaurant.Phone</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+<style>
+   
+    .modern-btn {
+        background: linear-gradient(to right, #ff7f50, #ff6347); 
+        color: white;
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+        transition: all 0.3s ease-in-out;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+        .modern-btn:hover {
+            background: linear-gradient(to right, #ff6347, #ff7f50); 
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+    
+    .table-modern {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+    }
+
+        .table-modern thead {
+            background-color: #343a40;
+            color: white;
+        }
+
+        .table-modern tbody tr:nth-of-type(odd) {
+            background-color: #f1f1f1; 
+        }
+
+    body {
+        background-color: #f7f7f7; 
+    }
+
+    .container {
+        max-width: 1200px;
+        padding: 40px;
+        background-color: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    }
+</style>

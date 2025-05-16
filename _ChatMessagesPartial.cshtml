@@ -1,0 +1,19 @@
+﻿@model List<BiteOrderWeb.Models.ChatMessage>
+@using Microsoft.AspNetCore.Identity
+@using BiteOrderWeb.Models
+@inject UserManager<Users> UserManager
+@{
+    var currentUserId = UserManager.GetUserId(User);
+}
+
+@foreach (var msg in Model)
+{
+    <div class="mb-3 d-flex @(msg.SenderId == currentUserId ? "justify-content-end" : "justify-content-start")">
+        <div class="d-flex flex-column">
+            <div class="p-2 rounded-3 text-white" style="max-width: 75%; background-color:@(msg.SenderId == currentUserId ? "#ff6600" : "#6c757d");">
+                @msg.Message
+            </div>
+            <div class="text-muted small mt-1">@msg.SentAt.ToLocalTime().ToString("g")</div>
+        </div>
+    </div>
+}

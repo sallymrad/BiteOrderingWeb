@@ -1,0 +1,196 @@
+﻿    @model BiteOrderWeb.ViewModels.ProductViewModel
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .modern-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 20px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
+    }
+
+    .modern-label {
+        font-weight: 600;
+        color: #444;
+    }
+
+    .modern-title {
+        color: #FF7F50;
+        font-weight: bold;
+        margin-bottom: 2rem;
+    }
+
+    .btn-orange {
+        background-color: #FF7F50;
+        color: white;
+        border-radius: 12px;
+        font-weight: bold;
+        padding: 10px 24px;
+        border: none;
+    }
+
+        .btn-orange:hover {
+            background-color: #ff5722;
+        }
+
+    .btn-outline-danger {
+        border-radius: 10px;
+        font-weight: bold;
+    }
+
+    .add-size-btn {
+        background-color: #6c757d;
+        border: none;
+        border-radius: 10px;
+        padding: 8px 20px;
+        color: white;
+    }
+
+    .form-control {
+        border-radius: 12px;
+    }
+
+    .img-preview {
+        height: 150px;
+        border-radius: 12px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        margin-top: 10px;
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="modern-card">
+        <h2 class="text-center modern-title">📝 Edit Product</h2>
+
+        @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+
+        <form asp-action="EditProduct" method="post" enctype="multipart/form-data">
+            <input type="hidden" asp-for="Id" />
+
+            <div class="mb-3">
+                <label asp-for="ImageFile" class="modern-label">Update Image</label>
+                <input type="file" asp-for="ImageFile" class="form-control" accept="image/*" />
+                <img src="@Model.ImageUrl" alt="Current Image" class="img-preview" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Name" class="modern-label">Product Name</label>
+                <input type="text" asp-for="Name" class="form-control" required />
+            </div>
+
+            <div class="mb-3">
+                <label class="modern-label">Category</label>
+                <select name="Category" id="categoryDropdown" class="form-control" required>
+                    <option value="Appetizers" selected="@(Model.Category == "Appetizers" ? "selected" : null)">Appetizers</option>
+                    <option value="Main Dishes" selected="@(Model.Category == "Main Dishes" ? "selected" : null)">Main Dishes</option>
+                    <option value="Drinks" selected="@(Model.Category == "Drinks" ? "selected" : null)">Drinks</option>
+                    <option value="Other" selected="@(Model.Category != "Appetizers" && Model.Category != "Main Dishes" && Model.Category != "Drinks" ? "selected" : null)">Other</option>
+                </select>
+
+                <input type="text"
+                       name="NewCategory"
+                       id="newCategoryInput"
+                       class="form-control mt-2"
+                       placeholder="Enter new category"
+                       style='display:@(Model.Category != "Appetizers" && Model.Category != "Main Dishes" && Model.Category != "Drinks" ? "block" : "none")'
+                       value='@(Model.Category != "Appetizers" && Model.Category != "Main Dishes" && Model.Category != "Drinks" ? Model.Category : "")' />
+            </div>
+
+
+            <div class="mb-3">
+                <label asp-for="Description" class="modern-label">Description</label>
+                <textarea asp-for="Description" class="form-control" required></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label class="modern-label">Sizes, Quantities and Prices</label>
+                <div id="sizesContainer">
+                    @for (int i = 0; i < Model.Sizes.Count; i++)
+                    {
+                        <div class="row mb-2">
+                            <div class="col-md-4">
+                                <input type="text" asp-for="Sizes[i].Size" class="form-control" required />
+                                <input type="hidden" asp-for="Sizes[i].Id" />
+                            </div>
+                            <div class="col-md-3">
+                                <input type="number" asp-for="Sizes[i].Quantity" class="form-control" min="0" required />
+                            </div>
+                            <div class="col-md-3">
+                                <input type="number" asp-for="Sizes[i].Price" class="form-control" min="0" step="0.01" required />
+                            </div>
+                            <div class="col-md-2 d-flex align-items-center">
+                                <button type="button" class="btn btn-outline-danger btn-sm removeSize">X</button>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <button type="button" class="add-size-btn mt-2" id="addSize">+ Add Size</button>
+            </div>
+
+            <div class="text-end mt-4">
+                <button type="submit" class="btn-orange">Update Product</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+
+         const dropdown = document.getElementById("categoryDropdown");
+        const newCatInput = document.getElementById("newCategoryInput");
+
+        dropdown.addEventListener("change", function () {
+            if (this.value === "Other") {
+                newCatInput.style.display = "block";
+                newCatInput.focus();
+            } else {
+                newCatInput.style.display = "none";
+                newCatInput.value = "";
+            }
+        });
+
+        document.addEventListener("click", function (e) {
+            if (e.target.classList.contains("removeSize")) {
+                e.target.closest(".row").remove();
+            }
+        });
+
+
+
+
+
+        document.getElementById("addSize").addEventListener("click", function () {
+            var container = document.getElementById("sizesContainer");
+           var index = document.querySelectorAll('#sizesContainer input[name^="Sizes["][name$="].Size"]').length;
+
+
+            var html = `
+            <div class="row mb-2">
+                <div class="col-md-4">
+                    <input type="hidden" name="Sizes[${index}].Id" value="0" />
+                    <input type="text" name="Sizes[${index}].Size" class="form-control" required />
+                </div>
+                <div class="col-md-3">
+                    <input type="number" name="Sizes[${index}].Quantity" class="form-control" min="0" required />
+                </div>
+                <div class="col-md-3">
+                    <input type="number" name="Sizes[${index}].Price" class="form-control" min="0" step="0.01" required />
+                </div>
+                <div class="col-md-2 d-flex align-items-center">
+                    <button type="button" class="btn btn-outline-danger btn-sm removeSize">X</button>
+                </div>
+            </div>`;
+
+            container.insertAdjacentHTML('beforeend', html);
+        });
+
+        document.addEventListener("click", function (e) {
+            if (e.target.classList.contains("removeSize")) {
+                e.target.closest(".row").remove();
+            }
+        });
+    </script>
+}

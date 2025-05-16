@@ -1,0 +1,57 @@
+﻿@model BiteOrderWeb.ViewModels.PaymentViewModel
+@{
+    Layout = "~/Views/Shared/_ClientLayout.cshtml";
+}
+
+@{
+    ViewData["Title"] = "Payment";
+}
+
+<h2>Payment</h2>
+
+
+<form asp-action="CreateStripeSession" method="post">
+    <input type="hidden" name="orderId" value="@Model.OrderId" />
+    <button type="submit" class="btn btn-success">💳 Pay Now</button>
+</form>
+
+@section Scripts {
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        const stripe = Stripe("@Model.PublishableKey");
+
+        fetch("/ShoppingCart/CreatePaymentIntent", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ amount: @Model.TotalPrice * 100 })
+        })
+        .then(res => res.json())
+        .then(data => {
+            const elements = stripe.elements();
+            const card = elements.create("card");
+            card.mount("#card-element");
+
+            const form = document.getElementById("payment-form");
+            form.addEventListener("submit", async (e) => {
+                e.preventDefault();
+
+                const { paymentIntent, error } = await stripe.confirmCardPayment(
+                    data.clientSecret, {
+                        payment_method: {
+                            card: card
+                        }
+                    }
+                );
+
+                if (error) {
+                    document.getElementById("payment-message").textContent = error.message;
+                } else {
+                    window.location.href = "/ShoppingCart/PaymentSuccess";
+                }
+            });
+        });
+    </script>
+}
+

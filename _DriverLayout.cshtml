@@ -1,0 +1,116 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<Users> SignInManager
+@inject UserManager<Users> UserManager
+@{
+    var currentUser = await UserManager.GetUserAsync(User);
+    var roles = currentUser != null ? await UserManager.GetRolesAsync(currentUser) : new List<string>();
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - BiteOrdering</title>
+    <link rel="icon" type="image/png" href="~/my.png" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <style>
+        body {
+            background-image: url('/images/i.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-color: transparent;
+        }
+
+        .driver-navbar {
+            background: linear-gradient(90deg, #ffd4b3, #ffb48e);
+        }
+
+
+
+
+        .navbar-brand {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2c2c2c;
+        }
+
+        .nav-button {
+            background-color: white;
+            color: #333;
+            padding: 6px 16px;
+            font-weight: 500;
+            border-radius: 15px;
+            transition: 0.3s;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+            font-size: 0.95rem;
+        }
+
+            .nav-button:hover,
+            .nav-button.active {
+                background: linear-gradient(135deg, #ff9966, #ff5e62);
+                color: white;
+            }
+
+        .logout-btn {
+            background: linear-gradient(135deg, #ff5e62, #ff9966);
+            border: none;
+            padding: 6px 16px;
+            font-weight: 600;
+            border-radius: 15px;
+            color: white;
+            transition: 0.3s;
+        }
+
+            .logout-btn:hover {
+                filter: brightness(1.08);
+                transform: scale(1.03);
+            }
+
+        .page-body-wrapper {
+            padding: 40px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg driver-navbar shadow-sm">
+        <div class="container-fluid">
+            <span class="navbar-brand">🚗 BiteOrdering Driver</span>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#driverNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse justify-content-end" id="driverNavbar">
+                <ul class="navbar-nav gap-2 align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-button nav-link" asp-controller="Driver" asp-action="Orders">📦 View Orders</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-button nav-link" asp-controller="Driver" asp-action="AcceptedOrders">✅ My Orders</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-button nav-link" asp-controller="Driver" asp-action="Dashboard">⚙️ Settings</a>
+                    </li>
+                    <li class="nav-item">
+                        <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                            <button type="submit" class="logout-btn">🚪 Logout</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="page-body-wrapper">
+        @RenderBody()
+    </div>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,128 @@
+﻿@model BiteOrderWeb.ViewModels.OrdersTrendFilterViewModel
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Orders Per Day";
+}
+
+<style>
+    .filter-card {
+        width: 280px;
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .section-title {
+        color: #FF7F50;
+        font-weight: bold;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-orange {
+        background-color: #FF7F50;
+        color: white;
+        border-radius: 10px;
+        font-weight: bold;
+        border: none;
+    }
+
+        .btn-orange:hover {
+            background-color: #ff5722;
+        }
+
+    .btn-secondary {
+        border-radius: 10px;
+    }
+</style>
+
+<div class="row mt-4">
+    <!-- Filters -->
+    <div class="col-md-3">
+        <form method="get" class="card p-4 filter-card">
+            <h5 class="mb-4 text-center">🔍 Filter By Date</h5>
+            <div class="form-group mb-3">
+                <label>From:</label>
+                <input type="date" name="fromDate" class="form-control"
+                       value="@Model.FromDate?.ToString("yyyy-MM-dd")" />
+            </div>
+            <div class="form-group mb-4">
+                <label>To:</label>
+                <input type="date" name="toDate" class="form-control"
+                       value="@Model.ToDate?.ToString("yyyy-MM-dd")" />
+            </div>
+
+            <button type="submit" class="btn btn-orange w-100 mb-2">Apply Filters</button>
+            <a href="@Url.Action("OrdersPerDayChart", "Admin")" class="btn btn-secondary w-100">Clear</a>
+        </form>
+    </div>
+
+    <!-- Chart -->
+    <div class="col-md-9">
+        <h2 class="section-title text-center">📈 Orders Per Day</h2>
+        <div style="height: 350px;">
+            <canvas id="ordersChart"></canvas>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('ordersChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: @Html.Raw(Json.Serialize(Model.OrdersPerDay.Select(d => d.Date))),
+                datasets: [{
+                    label: 'Orders Per Day',
+                    data: @Html.Raw(Json.Serialize(Model.OrdersPerDay.Select(d => d.TotalOrders))),
+                    borderColor: '#FF7F50',
+                    backgroundColor: '#FF7F50',
+                    fill: false,
+                    tension: 0.3,
+                    pointRadius: 5,
+                    pointBackgroundColor: '#FF7F50',
+                    pointBorderColor: '#fff',
+                    pointHoverRadius: 7
+                }]
+            },
+                   options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    ticks: {
+                        callback: function(value, index, ticks) {
+                            const rawLabel = this.getLabelForValue(value);
+                            return rawLabel.split('T')[0];
+                        }
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        title: function(context) {
+                           
+                            const fullDate = context[0].label;
+                            return fullDate.split('T')[0]; 
+                        },
+                        label: function(context) {
+                            return `Orders: ${context.formattedValue}`;
+                        }
+                    }
+                }
+            }
+        }
+
+        });
+    </script>
+}

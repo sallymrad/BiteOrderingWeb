@@ -1,0 +1,125 @@
+﻿@model IEnumerable<BiteOrderWeb.Models.Area>
+@{
+    Layout = "~/Views/Shared/_SuperAdminLayout.cshtml";
+}
+
+<h2 class="text-center mb-4">Manage Areas</h2>
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success text-center shadow-sm rounded-3 mt-3 mb-4">
+        @TempData["Success"]
+    </div>
+}
+
+<!-- Add New Area Form -->
+<form asp-action="AddArea" method="post" class="mb-3">
+    <div class="row g-2">
+        <div class="col-md-8">
+            <input type="text" name="areaName" class="form-control modern-input" placeholder="Add New Area..." required />
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-success modern-btn w-100">Add</button>
+        </div>
+    </div>
+</form>
+
+<!-- Areas Table -->
+<table class="table table-modern">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Area Name</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var area in Model)
+        {
+            <tr>
+                <td>@area.Id</td>
+                <td>@area.Name</td>
+                <td>
+                    <form asp-action="DeleteArea" method="post" class="d-inline">
+                        <input type="hidden" name="id" value="@area.Id" />
+                        <button type="submit" class="btn btn-danger btn-sm modern-btn">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<hr />
+
+<!-- Set Global Delivery Price -->
+<h4 class="mb-3">🔧 Set Global Delivery Price</h4>
+
+<form asp-action="UpdateDeliveryPrice" method="post" class="mt-3 mb-4">
+    <div class="input-group" style="max-width: 300px;">
+        <input type="number" step="0.01" name="price" value="@ViewBag.GlobalDeliveryPrice" class="form-control modern-input" required />
+        <button type="submit" class="btn btn-primary modern-btn">💾 Save</button>
+    </div>
+</form>
+
+<!-- CSS -->
+<style>
+    
+    .modern-input {
+        background: #f7f7f7;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 12px;
+        font-size: 16px;
+        transition: border-color 0.3s ease;
+    }
+
+        .modern-input:focus {
+            border-color: #ff7f50;
+            outline: none;
+        }
+
+   
+    .modern-btn {
+        background: linear-gradient(to right, #ff7f50, #ff6347); 
+        color: white;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+        .modern-btn:hover {
+            background: linear-gradient(to right, #ff6347, #ff7f50);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+  
+    .table-modern {
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    }
+
+        .table-modern thead {
+            background-color: #343a40;
+            color: white;
+        }
+
+        .table-modern tbody tr:nth-of-type(odd) {
+            background-color: #f1f1f1; 
+        }
+
+    body {
+        background-color: #f0f2f5; 
+    }
+
+    .container {
+        max-width: 1200px;
+        padding: 40px;
+        background-color: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    }
+</style>

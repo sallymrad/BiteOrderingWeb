@@ -1,0 +1,13 @@
+﻿@{
+    ViewData["Title"] = "Super Admin Home";
+    Layout = "~/Views/Shared/_SuperAdminLayout.cshtml";
+}
+
+<div class="superadmin-background d-flex flex-column justify-content-center align-items-center text-center">
+    <h1 class="display-4 mb-3 text-dark">Welcome Super Admin 👑</h1>
+    <p class="lead text-dark">Manage your platform efficiently from here.</p>
+
+    <a class="btn custom-dashboard-btn mt-4 px-4 py-3" asp-controller="SuperAdmin" asp-action="Dashboard">
+        Go to Dashboard
+    </a>
+</div>

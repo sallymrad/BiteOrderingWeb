@@ -1,0 +1,66 @@
+﻿@model BiteOrderWeb.ViewModels.DriverHomeViewModel
+@{
+    Layout = "~/Views/Shared/_DriverLayout.cshtml";
+    ViewData["Title"] = "Driver Home";
+}
+
+<style>
+   
+  
+   
+
+    .home-wrapper {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 30px;
+    }
+
+    .welcome-box {
+        background-color: rgba(255, 255, 255, 0.95);
+        padding: 60px 40px;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+        max-width: 700px;
+        width: 100%;
+    }
+
+        .welcome-box h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .welcome-box p {
+            font-size: 1.2rem;
+            color: #666;
+        }
+
+    .btn-orders {
+        background: linear-gradient(135deg, #f85f36, #ff9966);
+        color: white;
+        padding: 12px 30px;
+        border-radius: 50px;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 20px;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+        .btn-orders:hover {
+            background: linear-gradient(135deg, #e65126, #f67d4c);
+            color: white;
+        }
+</style>
+
+<div class="home-wrapper">
+    <div class="welcome-box">
+        <h1>👋 Welcome, @Model.FullName!</h1>
+        <p>Glad to have you on board 🚚</p>
+
+        <a href="/Driver/Orders" class="btn-orders">📦 View Available Orders</a>
+    </div>
+</div>
